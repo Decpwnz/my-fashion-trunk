@@ -1,18 +1,32 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { Item } from './interfaces/item.interface';
+import { Model, Types } from 'mongoose';
+import { Item } from './schemas/items.schema';
 
 @Injectable()
 export class ItemsService {
-  constructor(@InjectModel('Item') private itemModel: Model<Item>) {}
+  constructor(@InjectModel(Item.name) private itemModel: Model<Item>) {}
 
   async findAll(): Promise<Item[]> {
     return this.itemModel.find().exec();
   }
 
   async findOne(id: string): Promise<Item> {
-    return this.itemModel.findById(id).exec();
+    if (!Types.ObjectId.isValid(id)) {
+      throw new BadRequestException(
+        'Invalid ID format: ID must be a valid MongoDB ObjectId',
+      );
+    }
+    const objectId = new Types.ObjectId(id);
+    const item = await this.itemModel.findOne({ _id: objectId }).exec();
+    if (!item) {
+      throw new NotFoundException('Item not found');
+    }
+    return item;
   }
 
   async create(item: Item): Promise<Item> {
