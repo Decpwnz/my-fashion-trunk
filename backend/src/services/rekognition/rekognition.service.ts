@@ -63,7 +63,10 @@ export class RekognitionService {
     }
   }
 
-  async analyzeImage(imagePath: string): Promise<AnalysisResult> {
+  async analyzeImage(
+    imagePath: string,
+    imageUrl: string,
+  ): Promise<AnalysisResult> {
     const imageBuffer = await fs.readFile(imagePath);
     const command = new DetectLabelsCommand({
       Image: { Bytes: imageBuffer },
@@ -80,7 +83,7 @@ export class RekognitionService {
 
     const result: AnalysisResult = {
       isValid: prohibitedMatches.length === 0,
-      imageUrl: imagePath,
+      imageUrl,
       matchedCategories,
       rejectionReason:
         prohibitedMatches.length > 0

@@ -43,9 +43,12 @@ export class ItemsController {
     }
 
     try {
-      const imageUrl = `uploads/${file.filename}`;
-      const imagePath = path.join(process.cwd(), imageUrl);
-      const analysis = await this.rekognitionService.analyzeImage(imagePath);
+      const imageUrl = `http://localhost:3000/uploads/${file.filename}`;
+      const imagePath = path.join(process.cwd(), 'uploads', file.filename);
+      const analysis = await this.rekognitionService.analyzeImage(
+        imagePath,
+        imageUrl,
+      );
       return { imageUrl, analysis };
     } catch (error) {
       throw new BadRequestException(`Error processing image: ${error.message}`);
