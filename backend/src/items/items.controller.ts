@@ -13,7 +13,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { ItemsService } from './items.service';
 import { Item } from './interfaces/item.interface';
 import { multerConfig } from '../config/multer.config';
-import { RekognitionService } from '../services/rekognition.service';
+import { RekognitionService } from '../services/rekognition/rekognition.service';
 import * as path from 'path';
 
 @Controller('items')

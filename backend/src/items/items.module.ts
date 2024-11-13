@@ -4,7 +4,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ItemsService } from './items.service';
 import { ItemsController } from './items.controller';
 import { ItemSchema } from './schemas/items.schema';
-import { RekognitionService } from '../services/rekognition.service';
+import { RekognitionService } from '../services/rekognition/rekognition.service';
 
 @Module({
   imports: [

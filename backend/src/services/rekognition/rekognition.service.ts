@@ -5,6 +5,13 @@ import {
 } from '@aws-sdk/client-rekognition';
 import { ConfigService } from '@nestjs/config';
 import { promises as fs } from 'fs';
+import {
+  AnalysisResult,
+  MatchedCategory,
+  RekognitionLabel,
+  RekognitionResponse,
+} from './interfaces/rekognition.interface';
+import { CATEGORY_MAPPING, MIN_CONFIDENCE } from './constants/categories';
 
 @Injectable()
 export class RekognitionService {
@@ -56,11 +63,67 @@ export class RekognitionService {
     }
   }
 
-  async analyzeImage(imagePath: string) {
+  async analyzeImage(imagePath: string): Promise<AnalysisResult> {
     const imageBuffer = await fs.readFile(imagePath);
     const command = new DetectLabelsCommand({
       Image: { Bytes: imageBuffer },
+      MinConfidence: MIN_CONFIDENCE,
+      MaxLabels: 20,
     });
-    return this.rekognitionClient.send(command);
+
+    const response: RekognitionResponse =
+      await this.rekognitionClient.send(command);
+    const labels = response.Labels || [];
+
+    const matchedCategories = this.categorizeLabels(labels);
+    const prohibitedMatches = matchedCategories.filter((m) => m.isProhibited);
+
+    const result: AnalysisResult = {
+      isValid: prohibitedMatches.length === 0,
+      imageUrl: imagePath,
+      matchedCategories,
+      rejectionReason:
+        prohibitedMatches.length > 0
+          ? `Image contains prohibited content: ${prohibitedMatches.map((m) => m.category).join(', ')}`
+          : undefined,
+    };
+
+    this.logger.log(`Image analysis result: ${JSON.stringify(result)}`);
+    return result;
+  }
+
+  private categorizeLabels(labels: RekognitionLabel[]): MatchedCategory[] {
+    const matches: MatchedCategory[] = [];
+
+    for (const label of labels) {
+      const labelName = label.Name;
+      const confidence = label.Confidence;
+
+      for (const [category, keywords] of Object.entries(
+        CATEGORY_MAPPING.prohibited,
+      )) {
+        if (
+          keywords.some((keyword) =>
+            labelName.toLowerCase().includes(keyword.toLowerCase()),
+          )
+        ) {
+          matches.push({ category, confidence, isProhibited: true });
+        }
+      }
+
+      for (const [category, keywords] of Object.entries(
+        CATEGORY_MAPPING.allowed,
+      )) {
+        if (
+          keywords.some((keyword) =>
+            labelName.toLowerCase().includes(keyword.toLowerCase()),
+          )
+        ) {
+          matches.push({ category, confidence, isProhibited: false });
+        }
+      }
+    }
+
+    return matches;
   }
 }
