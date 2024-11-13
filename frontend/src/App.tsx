@@ -1,9 +1,12 @@
+import { ImageUpload } from './components/ImageUpload/ImageUpload'
+
 function App() {
   return (
-    <>
-      <h1>hi</h1>
-    </>
-  );
+    <div>
+      <h1>Image Analysis Tool</h1>
+      <ImageUpload />
+    </div>
+  )
 }
 
-export default App;
+export default App
