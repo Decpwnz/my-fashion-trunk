@@ -1,0 +1,49 @@
+.container {
+  padding: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.addCategory {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  align-items: center;
+}
+
+.addCategory input[type='text'] {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.categoryList {
+  display: grid;
+  gap: 1rem;
+}
+
+.category {
+  padding: 1rem;
+  border-radius: 4px;
+  position: relative;
+}
+
+.allowed {
+  background-color: rgba(40, 167, 69, 0.1);
+}
+
+.prohibited {
+  background-color: rgba(220, 53, 69, 0.1);
+}
+
+.category button {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  padding: 0.5rem;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
