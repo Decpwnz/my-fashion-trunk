@@ -1,5 +1,6 @@
 export interface MatchedCategory {
   category: string
+  matches: string[]
   confidence: number
   isProhibited: boolean
 }

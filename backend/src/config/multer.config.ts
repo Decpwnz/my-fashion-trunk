@@ -1,5 +1,11 @@
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { existsSync, mkdirSync } from 'fs';
+
+const uploadDir = './uploads';
+if (!existsSync(uploadDir)) {
+  mkdirSync(uploadDir);
+}
 
 export const multerConfig = {
   storage: diskStorage({
@@ -9,4 +15,14 @@ export const multerConfig = {
       callback(null, `${uniqueSuffix}${extname(file.originalname)}`);
     },
   }),
+  fileFilter: (req, file, callback) => {
+    if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
+      return callback(new Error('Only image files are allowed!'), false);
+    }
+    callback(null, true);
+  },
+  limits: {
+    fileSize: 5 * 1024 * 1024,
+  },
+  preservePath: true,
 };

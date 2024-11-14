@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ItemsModule } from './items/items.module';
 import { CategoriesModule } from './categories/categories.module';
+import { ImageAnalysisModule } from './image-analysis/image-analysis.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { CategoriesModule } from './categories/categories.module';
     MongooseModule.forRoot('mongodb://localhost/my-fashion-trunk'),
     ItemsModule,
     CategoriesModule,
+    ImageAnalysisModule,
   ],
   controllers: [AppController],
   providers: [AppService],

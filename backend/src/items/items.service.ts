@@ -6,6 +6,7 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Item } from './schemas/items.schema';
+import { CreateItemDto } from './dto/create-item.dto';
 
 @Injectable()
 export class ItemsService {
@@ -29,12 +30,21 @@ export class ItemsService {
     return item;
   }
 
-  async create(item: Item): Promise<Item> {
-    const newItem = new this.itemModel(item);
+  async create(createItemDto: CreateItemDto): Promise<Item> {
+    const newItem = new this.itemModel(createItemDto);
     return newItem.save();
   }
 
   async delete(id: string): Promise<Item> {
-    return this.itemModel.findByIdAndDelete(id).exec();
+    if (!Types.ObjectId.isValid(id)) {
+      throw new BadRequestException(
+        'Invalid ID format: ID must be a valid MongoDB ObjectId',
+      );
+    }
+    const deletedItem = await this.itemModel.findByIdAndDelete(id).exec();
+    if (!deletedItem) {
+      throw new NotFoundException(`Item with ID ${id} not found`);
+    }
+    return deletedItem;
   }
 }

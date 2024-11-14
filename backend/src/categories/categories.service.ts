@@ -1,6 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Category, CategoryDocument } from './schemas/category.schema';
 import { CreateCategoryDto } from './dto/create-category.dto';
 
@@ -20,6 +24,11 @@ export class CategoriesService {
   }
 
   async delete(id: string): Promise<Category> {
+    if (!Types.ObjectId.isValid(id)) {
+      throw new BadRequestException(
+        'Invalid ID format: ID must be a valid MongoDB ObjectId',
+      );
+    }
     const deletedCategory = await this.categoryModel
       .findByIdAndDelete(id)
       .exec();
