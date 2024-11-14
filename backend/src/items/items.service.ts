@@ -30,9 +30,8 @@ export class ItemsService {
     return item;
   }
 
-  async create(createItemDto: CreateItemDto): Promise<Item> {
-    const newItem = new this.itemModel(createItemDto);
-    return newItem.save();
+  async create(createCategoryDto: CreateItemDto): Promise<Item> {
+    return this.itemModel.create(createCategoryDto);
   }
 
   async delete(id: string): Promise<Item> {
