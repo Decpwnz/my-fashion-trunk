@@ -21,3 +21,9 @@ export interface UploadResponse {
   imageUrl: string
   analysis: AnalysisResult
 }
+
+export interface Category {
+  name: string
+  keywords: string[]
+  isProhibited: boolean
+}

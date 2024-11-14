@@ -1,22 +1,15 @@
 import { useState } from 'react'
 import styles from './CategoryManager.module.css'
-
-interface Category {
-  name: string
-  keywords: string[]
-  isProhibited: boolean
-}
+import { Category } from '../../types'
 
 export const CategoryManager = () => {
   const [categories, setCategories] = useState<Category[]>([
-    // Initial categories from our current hardcoded list
     {
       name: 'Fashion accessories',
       keywords: ['Accessory', 'Jewelry', 'Watch'],
       isProhibited: false,
     },
     { name: 'Food products', keywords: ['Food', 'Beverage', 'Drink'], isProhibited: true },
-    // ... other categories
   ])
 
   const [newCategory, setNewCategory] = useState<Category>({
