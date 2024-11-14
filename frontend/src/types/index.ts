@@ -22,8 +22,18 @@ export interface UploadResponse {
   analysis: AnalysisResult
 }
 
-export interface Category {
+export interface NewCategory {
   name: string
   keywords: string[]
   isProhibited: boolean
+}
+
+export interface Category extends NewCategory {
+  _id: string
+}
+
+export interface CategoriesState {
+  categories: Category[]
+  loading: boolean
+  error: string | null
 }

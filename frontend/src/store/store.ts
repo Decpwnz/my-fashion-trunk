@@ -1,10 +1,12 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit'
 import uploadReducer from './slices/uploadSlice'
+import categoriesReducer from './slices/categoriesSlice'
 import { loadState } from './utils/localStorageHelpers'
 import localStorageMiddleware from './middleware/localStorageMiddleware'
 
 const rootReducer = combineReducers({
   upload: uploadReducer,
+  categories: categoriesReducer,
 })
 
 export const store = configureStore({

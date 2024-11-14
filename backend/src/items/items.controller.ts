@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ItemsService } from './items.service';
-import { Item } from './interfaces/item.interface';
+import { Item } from './dto/create-item.dto';
 import { multerConfig } from '../config/multer.config';
 import { RekognitionService } from '../services/rekognition/rekognition.service';
 import * as path from 'path';

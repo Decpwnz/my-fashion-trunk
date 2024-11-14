@@ -4,6 +4,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ItemsModule } from './items/items.module';
+import { CategoriesModule } from './categories/categories.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { ItemsModule } from './items/items.module';
     }),
     MongooseModule.forRoot('mongodb://localhost/my-fashion-trunk'),
     ItemsModule,
+    CategoriesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
