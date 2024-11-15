@@ -7,25 +7,18 @@ RUN apk add --no-cache \
     aws-cli \
     python3
 
-# Install cross-env globally
-RUN npm install -g cross-env
-
 # Copy package files first to leverage Docker cache
 COPY package*.json ./
 RUN npm install
 
-# Copy environment files
-COPY .env.* ./
-
 # Copy rest of the application
 COPY . .
 
-# Set NODE_ENV and run build
-ENV NODE_ENV=local
+# Build the application
+ENV NODE_ENV=production
 RUN npm run build
 
 EXPOSE 3000
 
-# Start the application with environment variables
-ENV NODE_ENV=local
-CMD ["npm", "run", "start:local"] 
+# Start the application
+CMD ["npm", "run", "start:prod"] 
