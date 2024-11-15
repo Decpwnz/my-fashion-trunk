@@ -15,6 +15,8 @@ env:
   ECS_CLUSTER: my-fashion-trunk-cluster
   CONTAINER_NAME: frontend
   TASK_DEFINITION_FAMILY: frontend-task
+  ECS_TASK_EXECUTION_ROLE: arn:aws:iam::375157271503:role/ecsTaskExecutionRole
+  ECS_TASK_ROLE: arn:aws:iam::375157271503:role/ecsTaskRole
 
 jobs:
   deploy:
@@ -37,56 +39,22 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v2
 
       - name: Build, tag, and push image to Amazon ECR
-        id: build-image
         working-directory: ./frontend
+        env:
+          IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build -t ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }} \
-            --build-arg VITE_API_URL=https://api.yourdomain.com \
-            .
-          docker push ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
-          echo "image=${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}" >> $GITHUB_OUTPUT
-
-      - name: Create VPC resources
-        run: |
-          # Create VPC
-          VPC_ID=$(aws ec2 create-vpc --cidr-block 10.0.0.0/16 --query 'Vpc.VpcId' --output text)
-
-          # Create subnet
-          SUBNET_ID=$(aws ec2 create-subnet --vpc-id $VPC_ID --cidr-block 10.0.1.0/24 --query 'Subnet.SubnetId' --output text)
-
-          # Create security group
-          SG_ID=$(aws ec2 create-security-group --group-name ecs-security-group --description "Security group for ECS tasks" --vpc-id $VPC_ID --query 'GroupId' --output text)
-
-          # Allow inbound traffic on port 80
-          aws ec2 authorize-security-group-ingress --group-id $SG_ID --protocol tcp --port 80 --cidr 0.0.0.0/0
-
-          echo "SUBNET_ID=$SUBNET_ID" >> $GITHUB_ENV
-          echo "SECURITY_GROUP_ID=$SG_ID" >> $GITHUB_ENV
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
       - name: Create and update ECS resources
         run: |
-          # Register task definition
+          # Register task definition with execution role and task role
           aws ecs register-task-definition \
             --family ${{ env.TASK_DEFINITION_FAMILY }} \
             --container-definitions "[{\"name\":\"${{ env.CONTAINER_NAME }}\",\"image\":\"${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}\",\"essential\":true,\"portMappings\":[{\"containerPort\":80,\"hostPort\":80,\"protocol\":\"tcp\"}]}]" \
             --requires-compatibilities FARGATE \
             --network-mode awsvpc \
             --cpu 256 \
-            --memory 512
-
-          # Create service if it doesn't exist
-          if ! aws ecs describe-services --cluster ${{ env.ECS_CLUSTER }} --services ${{ env.ECS_SERVICE }} | grep -q "ACTIVE"; then
-            aws ecs create-service \
-              --cluster ${{ env.ECS_CLUSTER }} \
-              --service-name ${{ env.ECS_SERVICE }} \
-              --task-definition ${{ env.TASK_DEFINITION_FAMILY }} \
-              --desired-count 1 \
-              --launch-type FARGATE \
-              --network-configuration "awsvpcConfiguration={subnets=[${{ env.SUBNET_ID }}],securityGroups=[${{ env.SECURITY_GROUP_ID }}],assignPublicIp=ENABLED}"
-          else
-            aws ecs update-service \
-              --cluster ${{ env.ECS_CLUSTER }} \
-              --service ${{ env.ECS_SERVICE }} \
-              --task-definition ${{ env.TASK_DEFINITION_FAMILY }} \
-              --force-new-deployment
-          fi
+            --memory 512 \
+            --execution-role-arn ${{ env.ECS_TASK_EXECUTION_ROLE }} \
+            --task-role-arn ${{ env.ECS_TASK_ROLE }}
