@@ -14,10 +14,11 @@ ENV MONGODB_URI=$MONGODB_URI
 ENV AWS_REGION=$AWS_REGION
 ENV AWS_S3_BUCKET=$AWS_S3_BUCKET
 
-# Install AWS CLI
+# Install AWS CLI and NestJS CLI globally
 RUN apk add --no-cache \
     aws-cli \
-    python3
+    python3 && \
+    npm install -g @nestjs/cli
 
 COPY package*.json ./
 RUN npm install
