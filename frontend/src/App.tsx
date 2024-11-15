@@ -7,7 +7,7 @@ import styles from './App.module.css'
 
 function App() {
   const { loading } = useAppSelector((state) => state.upload)
-  // deploy test 5
+  // deploy test 6
   return (
     <div className={styles.container}>
       <h1>Image Analysis Tool</h1>
