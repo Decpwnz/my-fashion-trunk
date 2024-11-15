@@ -2,23 +2,30 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-# Install AWS CLI using apk
+# Add build arguments
+ARG NODE_ENV
+ARG MONGODB_URI
+ARG AWS_REGION
+ARG AWS_S3_BUCKET
+
+# Set environment variables
+ENV NODE_ENV=$NODE_ENV
+ENV MONGODB_URI=$MONGODB_URI
+ENV AWS_REGION=$AWS_REGION
+ENV AWS_S3_BUCKET=$AWS_S3_BUCKET
+
+# Install AWS CLI
 RUN apk add --no-cache \
     aws-cli \
     python3
 
-# Copy package files first to leverage Docker cache
 COPY package*.json ./
 RUN npm install
 
-# Copy rest of the application
 COPY . .
 
-# Build the application
-ENV NODE_ENV=production
 RUN npm run build
 
 EXPOSE 3000
 
-# Start the application
 CMD ["npm", "run", "start:prod"] 
