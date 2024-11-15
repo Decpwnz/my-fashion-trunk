@@ -4,16 +4,20 @@ import {
   UseInterceptors,
   UploadedFile,
   BadRequestException,
+  Inject,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ImageAnalysisService } from './image-analysis.service';
+import { STORAGE_SERVICE, StorageService } from '../storage/storage.interface';
 import { multerConfig } from '../config/multer.config';
 import { Express } from 'express';
-import * as fs from 'fs';
 
 @Controller('analyze')
 export class ImageAnalysisController {
-  constructor(private readonly imageAnalysisService: ImageAnalysisService) {}
+  constructor(
+    private readonly imageAnalysisService: ImageAnalysisService,
+    @Inject(STORAGE_SERVICE) private readonly storageService: StorageService,
+  ) {}
 
   @Post()
   @UseInterceptors(FileInterceptor('image', multerConfig))
@@ -25,12 +29,11 @@ export class ImageAnalysisController {
     }
 
     try {
-      const buffer = file.buffer || (await fs.promises.readFile(file.path));
-
-      const analysisResult =
-        await this.imageAnalysisService.analyzeImage(buffer);
-      const baseUrl = process.env.BASE_URL;
-      const imageUrl = `${baseUrl}/uploads/${file.filename}`;
+      const analysisResult = await this.imageAnalysisService.analyzeImage(
+        file.buffer,
+      );
+      const filename = await this.storageService.saveFile(file);
+      const imageUrl = this.storageService.getFileUrl(filename);
 
       return {
         imageUrl,

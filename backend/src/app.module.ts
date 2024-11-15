@@ -1,24 +1,20 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ItemsModule } from './items/items.module';
-import { CategoriesModule } from './categories/categories.module';
 import { ImageAnalysisModule } from './image-analysis/image-analysis.module';
+import envConfig from './config/env.config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
+      load: [envConfig],
       isGlobal: true,
-      envFilePath: '.env',
+      envFilePath: `.env.${process.env.NODE_ENV || 'local'}`,
     }),
-    MongooseModule.forRoot(process.env.MONGODB_URI),
-    ItemsModule,
-    CategoriesModule,
+    MongooseModule.forRoot(
+      process.env.MONGODB_URI || 'mongodb://localhost:27017/fashion-trunk',
+    ),
     ImageAnalysisModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}

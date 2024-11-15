@@ -1,27 +1,28 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import {
   RekognitionClient,
   DetectLabelsCommand,
-  Label,
+  DetectLabelsResponse,
 } from '@aws-sdk/client-rekognition';
-import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class RekognitionService {
-  private readonly rekognition: RekognitionClient;
-  private readonly logger = new Logger(RekognitionService.name);
+  private readonly rekognitionClient: RekognitionClient;
 
   constructor(private readonly configService: ConfigService) {
-    this.rekognition = new RekognitionClient({
-      region: this.configService.get('AWS_REGION'),
+    this.rekognitionClient = new RekognitionClient({
+      region: this.configService.get('app.aws.region'),
       credentials: {
-        accessKeyId: this.configService.get('AWS_ACCESS_KEY_ID'),
-        secretAccessKey: this.configService.get('AWS_SECRET_ACCESS_KEY'),
+        accessKeyId: this.configService.get('app.aws.accessKeyId'),
+        secretAccessKey: this.configService.get('app.aws.secretAccessKey'),
       },
     });
   }
 
-  async detectLabels(imageBuffer: Buffer): Promise<Label[]> {
+  async detectLabels(
+    imageBuffer: Buffer,
+  ): Promise<DetectLabelsResponse['Labels']> {
     const command = new DetectLabelsCommand({
       Image: {
         Bytes: imageBuffer,
@@ -30,12 +31,7 @@ export class RekognitionService {
       MinConfidence: 70,
     });
 
-    try {
-      const response = await this.rekognition.send(command);
-      return response.Labels || [];
-    } catch (error) {
-      this.logger.error('Error detecting labels:', error);
-      throw error;
-    }
+    const response = await this.rekognitionClient.send(command);
+    return response.Labels || [];
   }
 }
