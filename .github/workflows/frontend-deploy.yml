@@ -8,7 +8,8 @@ on:
       - '.github/workflows/frontend-deploy.yml'
 
 env:
-  AWS_REGION: ${{ secrets.AWS_REGION }}
+  AWS_REGION: eu-north-1
+  ECR_REGISTRY: 375157271503.dkr.ecr.eu-north-1.amazonaws.com
   ECR_REPOSITORY: my-fashion-trunk-frontend
   ECS_SERVICE: frontend-service
   ECS_CLUSTER: my-fashion-trunk-cluster
