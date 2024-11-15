@@ -11,9 +11,9 @@ function App() {
   return (
     <div className={styles.container}>
       <h1>Image Analysis Tool</h1>
-      <CategoryManager />
       <ImageUpload />
       <AnalysisResult />
+      <CategoryManager />
       {loading && <Spinner />}
     </div>
   )

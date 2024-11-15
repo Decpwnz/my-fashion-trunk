@@ -29,7 +29,8 @@ export class ImageAnalysisController {
 
       const analysisResult =
         await this.imageAnalysisService.analyzeImage(buffer);
-      const imageUrl = `http://localhost:3000/uploads/${file.filename}`;
+      const baseUrl = process.env.BASE_URL;
+      const imageUrl = `${baseUrl}/uploads/${file.filename}`;
 
       return {
         imageUrl,
