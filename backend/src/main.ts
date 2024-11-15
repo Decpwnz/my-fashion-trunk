@@ -12,7 +12,7 @@ async function bootstrap() {
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization'],
   });
-
+  // deploy test 3
   console.log(process.env.NODE_ENV);
   app.useStaticAssets(join(__dirname, '..', 'uploads'), {
     prefix: '/uploads',
