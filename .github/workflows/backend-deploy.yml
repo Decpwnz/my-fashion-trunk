@@ -10,17 +10,16 @@ on:
 env:
   AWS_REGION: eu-north-1
   ECR_REPOSITORY: my-fashion-trunk-backend
-  ECS_SERVICE: my-fashion-trunk-backend-service
-  ECS_CLUSTER: my-fashion-trunk-cluster
-  CONTAINER_NAME: my-fashion-trunk-backend-container
-  ECS_TASK_EXECUTION_ROLE: arn:aws:iam::375157271503:role/ecsTaskExecutionRole
-  ECS_TASK_ROLE: arn:aws:iam::375157271503:role/ecsTaskRole
   STORAGE_TYPE: s3
   AWS_REKOGNITION_REGION: eu-north-1
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
     steps:
       - uses: actions/checkout@v4
 
