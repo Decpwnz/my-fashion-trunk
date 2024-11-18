@@ -9,10 +9,12 @@ on:
 
 env:
   AWS_REGION: eu-north-1
+  ECR_REGISTRY: 375157271503.dkr.ecr.eu-north-1.amazonaws.com
   ECR_REPOSITORY: my-fashion-trunk-backend
   ECS_SERVICE: backend-service
   ECS_CLUSTER: my-fashion-trunk-cluster
   CONTAINER_NAME: backend
+  TASK_DEFINITION_FAMILY: backend-task
   ECS_TASK_EXECUTION_ROLE: arn:aws:iam::375157271503:role/ecsTaskExecutionRole
   ECS_TASK_ROLE: arn:aws:iam::375157271503:role/ecsTaskRole
 
@@ -36,45 +38,23 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Debug directory contents
-        working-directory: ./backend
-        run: |
-          pwd
-          ls -la
-
       - name: Build, tag, and push image to Amazon ECR
-        id: build-image
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          IMAGE_TAG: ${{ github.sha }}
         working-directory: ./backend
+        env:
+          IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
-            --build-arg NODE_ENV=production \
-            --build-arg MONGODB_URI=${{ secrets.MONGODB_URI }} \
-            --build-arg AWS_REGION=${{ env.AWS_REGION }} \
-            --build-arg AWS_S3_BUCKET=${{ secrets.AWS_S3_BUCKET }} \
-            --build-arg AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} \
-            --build-arg AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
-            .
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-      - name: Fill in the new image ID in the Amazon ECS task definition
-        id: task-def
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
-        with:
-          task-definition: .aws/backend-task-definition.json
-          container-name: ${{ env.CONTAINER_NAME }}
-          image: ${{ steps.build-image.outputs.image }}
-
-      - name: Deploy Amazon ECS task definition
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-        with:
-          task-definition: ${{ steps.task-def.outputs.task-definition }}
-          service: ${{ env.ECS_SERVICE }}
-          cluster: ${{ env.ECS_CLUSTER }}
-          wait-for-service-stability: true
+      - name: Create and update ECS resources
+        run: |
+          # Register task definition with execution role and task role
+          aws ecs register-task-definition \
+            --family ${{ env.TASK_DEFINITION_FAMILY }} \
+            --container-definitions "[{\"name\":\"${{ env.CONTAINER_NAME }}\",\"image\":\"${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}\",\"essential\":true,\"portMappings\":[{\"containerPort\":3000,\"hostPort\":3000,\"protocol\":\"tcp\"}]}]" \
+            --requires-compatibilities FARGATE \
+            --network-mode awsvpc \
+            --cpu 256 \
+            --memory 512 \
+            --execution-role-arn ${{ env.ECS_TASK_EXECUTION_ROLE }} \
+            --task-role-arn ${{ env.ECS_TASK_ROLE }}
