@@ -5,10 +5,10 @@ import { join } from 'path';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [];
+  // const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [];
 
   app.enableCors({
-    origin: allowedOrigins,
+    origin: '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization'],
