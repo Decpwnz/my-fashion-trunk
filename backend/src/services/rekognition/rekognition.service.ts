@@ -12,7 +12,7 @@ export class RekognitionService {
 
   constructor(private readonly configService: ConfigService) {
     this.rekognitionClient = new RekognitionClient({
-      region: this.configService.get('app.aws.region'),
+      region: this.configService.get('app.aws.rekognitionRegion'),
       credentials: {
         accessKeyId: this.configService.get('app.aws.accessKeyId'),
         secretAccessKey: this.configService.get('app.aws.secretAccessKey'),

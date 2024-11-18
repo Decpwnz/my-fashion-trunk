@@ -16,6 +16,7 @@ export default registerAs('app', () => ({
   },
   aws: {
     region: process.env.AWS_REGION,
+    rekognitionRegion: process.env.AWS_REKOGNITION_REGION || 'eu-west-1',
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
   },

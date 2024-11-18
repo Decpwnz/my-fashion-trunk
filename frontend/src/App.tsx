@@ -7,7 +7,7 @@ import styles from './App.module.css'
 
 function App() {
   const { loading } = useAppSelector((state) => state.upload)
-
+  console.log('frontend test 1')
   return (
     <div className={styles.container}>
       <h1>Image Analysis Tool</h1>
