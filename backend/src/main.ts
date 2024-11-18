@@ -20,7 +20,7 @@ async function bootstrap() {
     allowedHeaders: ['Content-Type', 'Authorization'],
   });
 
-  console.log('process.env.NODE_ENV 11', process.env.NODE_ENV);
+  console.log('process.env.NODE_ENV 12', process.env.NODE_ENV);
   app.useStaticAssets(join(__dirname, '..', 'uploads'), {
     prefix: '/uploads',
   });
