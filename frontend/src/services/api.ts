@@ -1,7 +1,9 @@
 import axios from 'axios'
 import type { Category, UploadResponse, NewCategory } from '../types'
 
-const API_URL = import.meta.env.VITE_API_URL
+const API_URL =
+  import.meta.env.VITE_API_URL ||
+  'my-fashion-trunk-backend-alb-203446907.eu-north-1.elb.amazonaws.com'
 
 export const uploadImage = async (file: File): Promise<UploadResponse> => {
   const formData = new FormData()
