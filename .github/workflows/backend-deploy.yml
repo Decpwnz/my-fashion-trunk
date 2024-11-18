@@ -51,6 +51,6 @@ jobs:
             --build-arg AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
             --build-arg STORAGE_TYPE=${{ env.STORAGE_TYPE }} \
             --build-arg BASE_URL=${{ secrets.BASE_URL }} \
-            ./backend
+            .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
