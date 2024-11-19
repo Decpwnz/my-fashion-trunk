@@ -1,8 +1,0 @@
-{
-  "dependencies": {
-    "@aws-sdk/client-s3": "^3.693.0"
-  },
-  "devDependencies": {
-    "cross-env": "^7.0.3"
-  }
-}
