@@ -5,7 +5,7 @@ import { join } from 'path';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  console.log('hello');
+
   app.enableCors({
     origin: (origin, callback) => {
       console.log('Incoming request from origin:', origin);

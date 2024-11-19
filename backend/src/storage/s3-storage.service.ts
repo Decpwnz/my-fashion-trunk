@@ -34,6 +34,7 @@ export class S3StorageService implements StorageService {
         Key: filename,
         Body: file.buffer,
         ContentType: file.mimetype,
+        ACL: 'public-read',
       }),
     );
 
