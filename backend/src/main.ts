@@ -13,9 +13,14 @@ async function bootstrap() {
 
   app.enableCors({
     origin:
-      process.env.NODE_ENV === 'production'
-        ? 'http://my-fashion-trunk-alb-1332421404.eu-north-1.elb.amazonaws.com/'
-        : '*',
+      // process.env.NODE_ENV === 'production'
+      //   ? 'http://my-fashion-trunk-alb-1332421404.eu-north-1.elb.amazonaws.com/'
+      //   : '*',
+      [
+        'http://my-fashion-trunk-alb-1332421404.eu-north-1.elb.amazonaws.com/',
+        'http://localhost:4173',
+        '*',
+      ],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization'],
