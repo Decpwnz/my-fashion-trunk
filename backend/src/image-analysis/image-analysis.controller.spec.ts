@@ -30,6 +30,13 @@ describe('ImageAnalysisController', () => {
             analyzeImage: jest.fn().mockResolvedValue(mockAnalysisResult),
           },
         },
+        {
+          provide: 'STORAGE_SERVICE',
+          useValue: {
+            saveFile: jest.fn().mockResolvedValue('mocked-url'),
+            getFileUrl: jest.fn().mockReturnValue('/uploads/test-image.jpg'),
+          },
+        },
       ],
     }).compile();
 
@@ -72,13 +79,19 @@ describe('ImageAnalysisController', () => {
         filename: 'test-image.jpg',
       } as Express.Multer.File;
 
+      jest.spyOn(console, 'error').mockImplementation(() => {});
+
       jest
         .spyOn(service, 'analyzeImage')
-        .mockRejectedValueOnce(new Error('Analysis failed'));
+        .mockRejectedValue(new Error('Analysis failed'));
 
-      await expect(controller.analyzeImage(mockFile)).rejects.toThrow(
-        BadRequestException,
-      );
+      try {
+        await controller.analyzeImage(mockFile);
+        fail('Should have thrown an error');
+      } catch (error) {
+        expect(error).toBeInstanceOf(BadRequestException);
+        expect(error.message).toBe('Error processing image: Analysis failed');
+      }
     });
   });
 });
