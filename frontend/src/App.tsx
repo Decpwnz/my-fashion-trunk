@@ -10,10 +10,17 @@ function App() {
 
   return (
     <div className={styles.container}>
-      <h1>Image Analysis Tool</h1>
-      <ImageUpload />
-      <AnalysisResult />
-      <CategoryManager />
+      <h1>My Fashion Trunk</h1>
+      <div className={styles.content}>
+        <div className={styles.leftPanel}>
+          <h2>Image Analysis Tool</h2>
+          <ImageUpload />
+          <AnalysisResult />
+        </div>
+        <div className={styles.rightPanel}>
+          <CategoryManager />
+        </div>
+      </div>
       {loading && <Spinner />}
     </div>
   )

@@ -19,11 +19,6 @@ export const CategoryManager = () => {
   }, [dispatch])
 
   const handleAddCategory = () => {
-    if (!newCategory.name || newCategory.keywords.length === 0) {
-      alert('Please fill in both name and keywords')
-      return
-    }
-
     const categoryToAdd: NewCategory = {
       name: newCategory.name.trim(),
       keywords: newCategory.keywords,

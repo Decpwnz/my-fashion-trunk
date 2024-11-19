@@ -1,6 +1,4 @@
 .container {
-  max-width: 600px;
-  margin: 2rem auto;
   padding: 1rem;
 }
 
@@ -42,7 +40,7 @@
 }
 
 .categories {
-  background-color: #f8f9fa;
+  background-color: rgba(255, 255, 255, 0.5);
   padding: 1rem;
   border-radius: 8px;
 }
