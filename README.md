@@ -89,7 +89,7 @@ You can run this project either locally or using Docker. Choose the method that 
 - Docker
 - Docker Compose
 
-1. Create a `.env` file in the root directory with all required environment variables:
+1. Create a .env.local file in the backend directory with the following variables:
 
    ```bash
    # Backend Environment Variables
@@ -101,12 +101,16 @@ You can run this project either locally or using Docker. Choose the method that 
    AWS_ACCESS_KEY_ID=your-access-key
    AWS_SECRET_ACCESS_KEY=your-secret-key
    BASE_URL=http://localhost:3000
+   ```
 
+2. Create a .env.local file in the frontend directory with the following variables:
+
+   ```bash
    # Frontend Environment Variables
    VITE_API_URL=http://localhost:3000
    ```
 
-2. Build and run the containers:
+3. Build and run the containers:
 
    ```bash
    docker-compose up --build
