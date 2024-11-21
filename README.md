@@ -6,8 +6,8 @@ Web application for analyzing fashion items using AI image recognition.
 
 The application is currently running on AWS:
 
-- Frontend: [http://my-fashion-trunk-alb-1332421404.eu-north-1.elb.amazonaws.com/](http://my-fashion-trunk-alb-1332421404.eu-north-1.elb.amazonaws.com/)
-- Backend: [http://my-fashion-trunk-backend-alb-203446907.eu-north-1.elb.amazonaws.com](http://my-fashion-trunk-backend-alb-203446907.eu-north-1.elb.amazonaws.com)
+- Frontend: [http://my-fashion-trunk-alb-1332421404.eu-north-1.elb.amazonaws.com/](http://my-fashion-trunk-alb-1332421404.eu-north-1.elb.amazonaws.com/) currently not working, can be relaunched if requested
+- Backend: [http://my-fashion-trunk-backend-alb-203446907.eu-north-1.elb.amazonaws.com](http://my-fashion-trunk-backend-alb-203446907.eu-north-1.elb.amazonaws.com) currently not working, can be relaunched if requested
 
 ## Project Structure
 
